@@ -9,24 +9,6 @@ public class Java {
             FileReader fileReader = new FileReader("VariableDeclerationParserTest.txt");
             Java.ReInit(fileReader);
             parser.Statement();
-//                   Token token;
-//                    while (true) {
-//                        try {
-//                            System.out.println(parser.token);
-//                            parser.Statement();
-//                            System.out.println("Valid statement!");
-//                        } catch (ParseException e) {
-//                            System.out.println("Parse error: " + e.getMessage());
-//                            // Skip to semicolon for error recovery
-////                            do {
-////                                token = parser.getNextToken();
-////                            } while (token.kind != SEMICOLON && token.kind != EOF);
-//                        }
-//                        // Check if we've reached EOF
-//                        token = parser.getNextToken();
-//                        if (token.kind == EOF) break;
-//                        parser.token = token;  // Push back token for next parse
-//                    }
             System.out.println("Parsing completed successfully!");
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
