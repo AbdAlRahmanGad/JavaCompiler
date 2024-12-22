@@ -2,32 +2,51 @@ PARSER_BEGIN(Java)
 import java.io.*;
 public class Java {
     public static void main(String[] args) throws ParseException {
-        try {
-          FileReader fileReader = new FileReader("TokensNoIdentifierORNumberTest.txt");
-          FileReader fileReader2 = new FileReader("Tokens.txt");
-          Java parser = new Java(fileReader);
-          while (true) {
-            Token t = parser.getNextToken();
-            if (t.kind == EOF) break;
-            System.out.println("Token: " + t.image + ", Kind: " + t.kind);
+        Java parser = new Java(System.in);
+        checkTokens(parser);
 
-          }
-          parser.ReInit(fileReader2);
-            while (true) {
-                Token t = parser.getNextToken();
-                if (t.kind == EOF) break;
-                System.out.println("2 Token: " + t.image + ", Kind: " + t.kind);
-            }
-
+        try{
+            FileReader fileReader = new FileReader("VariableDeclerationParserTest.txt");
+            Java.ReInit(fileReader);
+            parser.Statement();
+            System.out.println("Parsing completed successfully!");
         } catch (FileNotFoundException e) {
-          System.out.println("File not found");
+            System.out.println("File not found");
         }
+    }
+    public static void checkTokens (Java parser) {
+       try {
+         FileReader fileReader = new FileReader("TokensNoIdentifierORNumberTest.txt");
+         FileReader fileReader2 = new FileReader("Tokens.txt");
+         parser.ReInit(fileReader);
+         while (true) {
+           Token t = parser.getNextToken();
+           if (t.kind == EOF) break;
+           System.out.println("Token: " + t.image + ", Kind: " + t.kind);
+
+         }
+         parser.ReInit(fileReader2);
+           while (true) {
+               Token t = parser.getNextToken();
+               if (t.kind == EOF)
+                   break;
+               System.out.printf("Token: %s at line %d, column %d: \"%s\"%n",
+                   token.kind,
+                   token.beginLine,
+                   token.beginColumn,
+                   token.image);
+           }
+       } catch (FileNotFoundException e) {
+         System.out.println("File not found");
+       }
     }
 }
 
 PARSER_END(Java)
 
-SKIP : { " " | "\t" | "\n" | "\r"
+
+
+SKIP : { " " | "\t" | "\n" | "\r" | "  "
 | <SINGLE_LINE_COMMENT : "//" (~["\n","\r"])* ("\n"|"\r"|"\r\n")> // ?
 | <MULTI_LINE_COMMENT : "/*" (~["*"])* "*" (~["/"] (~["*"])* "*")* "/" > // ?
 }
@@ -144,7 +163,6 @@ TOKEN :
 }
 
 // delimiters
-
 TOKEN : {
     <LPAREN : "(" >
 | <RPAREN : ")" >
@@ -167,6 +185,12 @@ TOKEN :
 < FALSE: "false" >
 | < CHAR_LITERAL: "'" (~["'","\\","\n","\r"] | "\\" (["n","t","r","\\","'","\""])) "'" >
 | < STRING_LITERAL: "\"" (~["\"","\\","\n","\r"] | "\\" (["n","t","r","\\","'","\""]))* "\"" >
+ | < FLOAT_LITERAL: (["0"-"9"])+ "." (["0"-"9"])* (<F>)
+                   | "." (["0"-"9"])+ (<F>)
+                   | (["0"-"9"])+ (<F>) >
+| < DOUBLE_LITERAL: (["0"-"9"])+ "." (["0"-"9"])* (<D>)?
+                    | "." (["0"-"9"])+ (<D>)?
+                    | (["0"-"9"])+ (<D>)>
 | < NON_SEALED: "non-sealed" >
 | < NULL: "null" >
 | < PERMITS: "permits">
@@ -188,7 +212,55 @@ TOKEN :
 
 //// Identifiers
 TOKEN : {
-  <LETTER : [ "a"-"z", "A"-"Z" ]>
-| <DIGIT : [ "0"-"9" ]>
+ <DIGIT : [ "0"-"9" ]>
 | <ID : ( <LETTER> | "_" ) ( <LETTER> | <DIGIT> | "_" )*>
+| <LETTER : [ "a"-"z", "A"-"Z" ]>
+
+}
+MORE : {
+< F : ("f" | "F") >
+| < D : ("d" | "D") >
+}
+
+void Statement() : {}
+{
+    (LOOKAHEAD(3)
+        VariableDeclaration() |
+        Assignment()
+    )*
+    <EOF>
+}
+
+void VariableDeclaration() : {}
+{
+    (
+        <INT> |
+        <DOUBLE> |
+        <CHAR> |
+        <STRING> |
+        <FLOAT>
+    )
+    Identifier()
+    <SEMICOLON>
+}
+void Assignment() : {}
+{
+
+(
+            <STRING> Identifier() <ASSIGN> <STRING_LITERAL> |
+            <CHAR> Identifier() <ASSIGN> <CHAR_LITERAL> |
+            <INT> Identifier() <ASSIGN> Digits() |
+            <DOUBLE> Identifier() <ASSIGN> <DOUBLE_LITERAL> |
+            <FLOAT> Identifier() <ASSIGN> <FLOAT_LITERAL>
+      )
+      <SEMICOLON>
+}
+
+void Digits() : {}
+{
+    (<DIGIT>)+
+}
+void Identifier() : {}
+{
+  <ID>
 }

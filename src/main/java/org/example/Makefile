@@ -6,3 +6,6 @@ compile:
 
 run:
 	java Java > output.txt
+
+clean:
+	rm -f *.class Java.java JavaTokenManager.java JavaConstants.java ParseException.java Token.java SimpleCharStream.java output.txt
