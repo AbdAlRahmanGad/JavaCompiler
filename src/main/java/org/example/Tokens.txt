@@ -1,0 +1,115 @@
+// Reserved words
+abstract class Example {
+    continue;
+    for (int i = 0; i < 10; i++) {
+        new Example();
+    }
+    switch (i) {
+        case 1:
+            assert true;
+            break;
+        default:
+            goto label;
+    }
+    package com.example;
+    synchronized void syncMethod() {
+        boolean flag = true;
+        do {
+            if (flag) {
+                private int number = 42;
+                this.number = 42;
+            }
+        } while (flag);
+        throw new Exception();
+    }
+    byte b = 0;
+    else {
+        import java.util.*;
+    }
+    public static void main(String[] args) {
+        protected void protectedMethod() {
+            instanceof Example;
+            return;
+        }
+        transient int transientVar;
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        extends Example {
+            int var;
+        }
+        short s = 0;
+        try {
+            // Some code
+        }
+        char c = 'a';
+        final int finalVar = 42;
+        interface ExampleInterface {
+            void interfaceMethod();
+        }
+        static {
+            // Static block
+        }
+        void voidMethod() {
+            // Void method
+        }
+        class InnerClass {
+            // Inner class
+        }
+        finally {
+            // Finally block
+        }
+        long l = 0L;
+        strictfp void strictfpMethod() {
+            // Strictfp method
+        }
+        volatile int volatileVar;
+        const int constVar = 42;
+        float f = 0.0f;
+        native void nativeMethod();
+        super();
+        while (true) {
+            // While loop
+        }
+    }
+}
+
+// Operators
+int a = 1;
+int b = a + 1;
+int c = a - 1;
+int d = a * 1;
+int e = a / 1;
+int f = a & 1;
+int g = a | 1;
+int h = a ^ 1;
+int i = a % 1;
+int j = a << 1;
+int k = a >> 1;
+int l = a >>> 1;
+int m = a == 1;
+int n = a >= 1;
+int o = a <= 1;
+int p = a != 1;
+int q = a && true;
+int r = a || true;
+int s = a++;
+int t = a--;
+int u = a = 1;
+int v = a += 1;
+int w = a -= 1;
+int x = a *= 1;
+int y = a /= 1;
+int z = a &= 1;
+int aa = a |= 1;
+int ab = a ^= 1;
+int ac = a %= 1;
+int ad = a <<= 1;
+int ae = a >>= 1;
+int af = a >>>= 1;
+
+// Delimiters
+( ) { } [ ] ; , . ... @ ::
+
+// Literals
+false non-sealed null permits record sealed true requires to with open opens uses module exports provides transitive when

@@ -1,0 +1,115 @@
+// Reserved words
+abstract class {
+    continue;
+    for (int = ; <; ++) {
+        new ();
+    }
+    switch () {
+        case :
+            assert true;
+            break;
+        default:
+            goto;
+    }
+    package ;
+    synchronized void () {
+        boolean = true;
+        do {
+            if () {
+                private int =;
+                this. =;
+            }
+        } while ();
+        throw new ();
+    }
+    byte =;
+    else {
+        import ;
+    }
+    public static void (String[] ) {
+        protected void () {
+            instanceof ;
+            return;
+        }
+        transient int ;
+        catch (Exception ) {
+
+        }
+        extends () {
+            int ;
+        }
+        short =;
+        try {
+            // Some code
+        }
+        char =;
+        final int =;
+        interface () {
+            void ();
+        }
+        static {
+            // Static block
+        }
+        void () {
+            // Void method
+        }
+        class () {
+            // Inner class
+        }
+        finally {
+            // Finally block
+        }
+        long =;
+        strictfp void () {
+            // Strictfp method
+        }
+        volatile int ;
+        const int =;
+        float =;
+        native void ();
+        super();
+        while (true) {
+            // While loop
+        }
+    }
+}
+
+// Operators
+int = -;
+int = + -;
+int = - -;
+int = * -;
+int = / -;
+int = & -;
+int = | -;
+int = ^ -;
+int = % -;
+int = << -;
+int = >> -;
+int = >>> -;
+int = == -;
+int = >= -;
+int = <= -;
+int = != -;
+int = && true;
+int = || true;
+int = ++;
+int = --;
+int = = -;
+int = += -;
+int = -= -;
+int = *= -;
+int = /= -;
+int = &= -;
+int = |= -;
+int = ^= -;
+int = %= -;
+int = <<= -;
+int = >>= -;
+int = >>>= -;
+
+// Delimiters
+( ) { } [ ] ; , . ... @ ::
+
+// Literals
+false non-sealed null permits record sealed true requires to with open opens uses module exports provides transitive when
