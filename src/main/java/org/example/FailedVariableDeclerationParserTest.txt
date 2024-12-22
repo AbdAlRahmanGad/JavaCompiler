@@ -1,0 +1,10 @@
+int myVar;
+dle ddd;
+String name = "hello"
+float f = 123.456F;
+double d = 123.456
+double d = 123.456D;
+double d = 123.456d;
+double d = 123.456;
+double d = 123.456;
+char c = 'a';
