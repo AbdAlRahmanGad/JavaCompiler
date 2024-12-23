@@ -24,6 +24,11 @@ public class Java {
             Java.ReInit(fileReader4);
             parser.testWhile();
             System.out.println("Parsing While Statement completed successfully!");
+
+            FileReader fileReader5 = new FileReader("for.txt");
+            Java.ReInit(fileReader5);
+            parser.ForTest();
+            System.out.println("Parsing For Statement completed successfully!");
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
         }
@@ -243,7 +248,10 @@ void Statement() : {}
         VariableDeclaration() |
         Assignment() |
         IfStatement() |
-        WhileStatement()
+        WhileStatement() |
+        ForStatement() |
+        AssignmentWithNoSemicolon() <SEMICOLON> |
+        IncrementDecrement() <SEMICOLON>
     )*
     <EOF>
 }
@@ -254,7 +262,10 @@ void nestedStatement() : {}
         VariableDeclaration() |
         Assignment() |
         WhileStatement() |
-        IfStatement()
+        IfStatement() |
+        ForStatement() |
+        AssignmentWithNoSemicolon() <SEMICOLON> |
+        IncrementDecrement() <SEMICOLON>
     )
 }
 
@@ -269,10 +280,84 @@ void WhileStatement() : {}
      (nestedStatement() | <LBRACE> (nestedStatement())* <RBRACE>)
 }
 
-//void ForStatement() : {}
-//{
-//    <FOR> <LPAREN> (Assignment() | VariableDeclaration())? <SEMICOLON> Expression()? <SEMICOLON> Assignment()? <RPAREN> Statement()
-//}
+void ForTest() : {}
+{
+    (ForStatement())*
+    <EOF>
+}
+
+void ForStatement() : {}
+{
+
+    <FOR> <LPAREN>
+        (ForInit())? <SEMICOLON>
+        (Expression())? <SEMICOLON>
+        (ForUpdate())?
+    <RPAREN>
+    (<LBRACE> (nestedStatement())* <RBRACE> | nestedStatement())
+}
+
+
+void ForInit() : {}
+{
+    LOOKAHEAD(2)
+    VariableDeclarationWithNoSemicolon()
+    (<COMMA> VariableDeclarationAfterComma() | AssignmentWithNoSemicolon())*
+    |
+    AssignmentWithNoSemicolon()
+    (<COMMA> AssignmentWithNoSemicolon())*
+}
+
+void ForUpdate() : {}
+{
+    LOOKAHEAD(2)
+    AssignmentWithNoSemicolon() |
+    IncrementDecrement()
+    (<COMMA> IncrementDecrement() | AssignmentWithNoSemicolon())*
+}
+
+void IncrementDecrement() : {}
+{
+    LOOKAHEAD(3)
+    <ID> (<INCR> | <DECR>) |
+    (<INCR> | <DECR>) <ID> |
+    <ID> (
+        <PLUSASSIGN> |
+        <MINUSASSIGN> |
+        <STARASSIGN> |
+        <SLASHASSIGN> |
+        <ANDASSIGN> |
+        <ORASSIGN> |
+        <XORASSIGN> |
+        <REMASSIGN> |
+        <LSHIFTASSIGN> |
+        <RSIGNEDSHIFTASSIGN> |
+        <RUNSIGNEDSHIFTASSIGN>
+    ) MathExpressionForLoop()
+}
+
+void VariableDeclarationWithNoSemicolon() : {}
+{
+    (
+        <INT> |
+        <DOUBLE> |
+        <CHAR> |
+        <STRING> |
+        <FLOAT>
+    )
+    Identifier()
+    [<ASSIGN> Expression()]
+}
+void VariableDeclarationAfterComma() : {}
+{
+    Identifier()
+    [<ASSIGN> Expression()]
+}
+
+void AssignmentWithNoSemicolon() : {}
+{
+    <ID> <ASSIGN> Expression()
+}
 
 void IfStatementTest() : {}
 {
@@ -313,6 +398,29 @@ void Factor() : {}
     <TRUE> |
     <FALSE> |
     <LPAREN> Expression() <RPAREN> |
+    <ID>
+}
+
+void MathExpressionForLoop() : {}
+{
+    TermForLoop() ( <PLUS> TermForLoop() | <MINUS> TermForLoop() )*
+}
+
+void TermForLoop() : {}
+{
+    FactorForLoop() (<STAR> FactorForLoop() | <SLASH> FactorForLoop())*
+}
+
+void FactorForLoop() : {}
+{
+    Digits() |
+    <DOUBLE_LITERAL> |
+    <FLOAT_LITERAL> |
+    <CHAR_LITERAL> |
+    <STRING_LITERAL> |
+    <TRUE> |
+    <FALSE> |
+    <LPAREN> MathExpressionForLoop() <RPAREN> |
     <ID>
 }
 
