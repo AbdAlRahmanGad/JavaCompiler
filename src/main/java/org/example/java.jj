@@ -29,6 +29,11 @@ public class Java {
             Java.ReInit(fileReader5);
             parser.ForTest();
             System.out.println("Parsing For Statement completed successfully!");
+
+            FileReader fileReader6 = new FileReader("FullProgram.txt");
+            Java.ReInit(fileReader6);
+            parser.Statement();
+            System.out.println("Parsing Complete Java Program completed successfully!");
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
         }
@@ -250,7 +255,9 @@ void Statement() : {}
         IfStatement() |
         WhileStatement() |
         ForStatement() |
-        AssignmentWithNoSemicolon() <SEMICOLON> |
+        LOOKAHEAD(2)
+        <ID> NoIDIncrementDecrement() <SEMICOLON>|
+        <ID> noIDAssignmentWithNoSemicolon() <SEMICOLON> |
         IncrementDecrement() <SEMICOLON>
     )*
     <EOF>
@@ -264,8 +271,13 @@ void nestedStatement() : {}
         WhileStatement() |
         IfStatement() |
         ForStatement() |
-        AssignmentWithNoSemicolon() <SEMICOLON> |
+        LOOKAHEAD(2)
+        <ID> NoIDIncrementDecrement() <SEMICOLON>|
+        <ID> noIDAssignmentWithNoSemicolon() <SEMICOLON> |
         IncrementDecrement() <SEMICOLON>
+//        IncrementDecrement() <SEMICOLON> |
+//                AssignmentWithNoSemicolon() <SEMICOLON>
+
     )
 }
 
@@ -316,6 +328,24 @@ void ForUpdate() : {}
     (<COMMA> IncrementDecrement() | AssignmentWithNoSemicolon())*
 }
 
+void NoIDIncrementDecrement() : {}
+{
+    (<INCR> | <DECR>) |
+(
+        <PLUSASSIGN> |
+        <MINUSASSIGN> |
+        <STARASSIGN> |
+        <SLASHASSIGN> |
+        <ANDASSIGN> |
+        <ORASSIGN> |
+        <XORASSIGN> |
+        <REMASSIGN> |
+        <LSHIFTASSIGN> |
+        <RSIGNEDSHIFTASSIGN> |
+        <RUNSIGNEDSHIFTASSIGN>
+    ) MathExpressionForLoop()
+}
+
 void IncrementDecrement() : {}
 {
     LOOKAHEAD(3)
@@ -343,7 +373,8 @@ void VariableDeclarationWithNoSemicolon() : {}
         <DOUBLE> |
         <CHAR> |
         <STRING> |
-        <FLOAT>
+        <FLOAT> |
+        <BOOLEAN>
     )
     Identifier()
     [<ASSIGN> Expression()]
@@ -357,6 +388,11 @@ void VariableDeclarationAfterComma() : {}
 void AssignmentWithNoSemicolon() : {}
 {
     <ID> <ASSIGN> Expression()
+}
+
+void noIDAssignmentWithNoSemicolon() : {}
+{
+    <ASSIGN> Expression()
 }
 
 void IfStatementTest() : {}
@@ -449,7 +485,8 @@ void VariableDeclaration() : {}
         <DOUBLE> |
         <CHAR> |
         <STRING> |
-        <FLOAT>
+        <FLOAT> |
+        <BOOLEAN>
     )
     Identifier()
     <SEMICOLON>
@@ -463,7 +500,8 @@ void Assignment() : {}
         <CHAR> Identifier() <ASSIGN> (<CHAR_LITERAL>| Identifier()) |
         <INT> Identifier() <ASSIGN> (LOOKAHEAD(3)Digits() | (MathExpression())+) |
         <DOUBLE> Identifier() <ASSIGN> (LOOKAHEAD(2)<DOUBLE_LITERAL> | (MathExpression())+) |
-        <FLOAT> Identifier() <ASSIGN> (LOOKAHEAD(2)<FLOAT_LITERAL>  | (MathExpression())+)
+        <FLOAT> Identifier() <ASSIGN> (LOOKAHEAD(2)<FLOAT_LITERAL>  | (MathExpression())+) |
+        <BOOLEAN> Identifier() <ASSIGN> (LOOKAHEAD(2)<TRUE> | <FALSE> | (Expression() )+)
       )
       <SEMICOLON>
 }
