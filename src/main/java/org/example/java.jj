@@ -15,48 +15,90 @@ public class Java {
         System.out.println("==================\n");
     }
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) {
         Java parser = new Java(System.in);
 //        checkTokens(parser);
-        try{
+        try {
             FileReader fileReader = new FileReader("VariableDeclerationParserTest.txt");
             Java.ReInit(fileReader);
-            parser.Statement();
-            System.out.println("Parsing completed successfully!");
-            printSymbolTable();
+            try {
+                parser.Statement();
+                System.out.println("Parsing completed successfully!");
+                printSymbolTable();
+            } catch (ParseException e) {
+                System.out.println("Parse error in VariableDeclerationParserTest.txt: " + e.getMessage());
+                System.out.println("At line " + e.currentToken.beginLine + ", column " + e.currentToken.beginColumn);
+            } catch (TokenMgrError e) {
+                System.out.println("Lexical error in VariableDeclerationParserTest.txt: " + e.getMessage());
+            }
 
-            FileReader fileReader2 = new FileReader("excepretion.txt");
-            Java.ReInit(fileReader2);
-            parser.compTest();
-            System.out.println("Parsing Comparision completed successfully!");
-            printSymbolTable();
+            fileReader = new FileReader("excepretion.txt");
+            Java.ReInit(fileReader);
+            try {
+                parser.compTest();
+                System.out.println("Parsing Comparison completed successfully!");
+                printSymbolTable();
+            } catch (ParseException e) {
+                System.out.println("Parse error in excepretion.txt: " + e.getMessage());
+                System.out.println("At line " + e.currentToken.beginLine + ", column " + e.currentToken.beginColumn);
+            } catch (TokenMgrError e) {
+                System.out.println("Lexical error in excepretion.txt: " + e.getMessage());
+            }
 
-            FileReader fileReader3 = new FileReader("ifElse.txt");
-            Java.ReInit(fileReader3);
-            parser.IfStatementTest();
-            System.out.println("Parsing If Statement completed successfully!");
-            printSymbolTable();
+            fileReader = new FileReader("ifElse.txt");
+            Java.ReInit(fileReader);
+            try {
+                parser.IfStatementTest();
+                System.out.println("Parsing If Statement completed successfully!");
+                printSymbolTable();
+            } catch (ParseException e) {
+                System.out.println("Parse error in ifElse.txt: " + e.getMessage());
+                System.out.println("At line " + e.currentToken.beginLine + ", column " + e.currentToken.beginColumn);
+            } catch (TokenMgrError e) {
+                System.out.println("Lexical error in ifElse.txt: " + e.getMessage());
+            }
 
-            FileReader fileReader4 = new FileReader("while.txt");
-            Java.ReInit(fileReader4);
-            parser.testWhile();
-            System.out.println("Parsing While Statement completed successfully!");
-            printSymbolTable();
+            fileReader = new FileReader("while.txt");
+            Java.ReInit(fileReader);
+            try {
+                parser.testWhile();
+                System.out.println("Parsing While Statement completed successfully!");
+                printSymbolTable();
+            } catch (ParseException e) {
+                System.out.println("Parse error in while.txt: " + e.getMessage());
+                System.out.println("At line " + e.currentToken.beginLine + ", column " + e.currentToken.beginColumn);
+            } catch (TokenMgrError e) {
+                System.out.println("Lexical error in while.txt: " + e.getMessage());
+            }
 
-            FileReader fileReader5 = new FileReader("for.txt");
-            Java.ReInit(fileReader5);
-            parser.ForTest();
-            System.out.println("Parsing For Statement completed successfully!");
-            printSymbolTable();
+            fileReader = new FileReader("for.txt");
+            Java.ReInit(fileReader);
+            try {
+                parser.ForTest();
+                System.out.println("Parsing For Statement completed successfully!");
+                printSymbolTable();
+            } catch (ParseException e) {
+                System.out.println("Parse error in for.txt: " + e.getMessage());
+                System.out.println("At line " + e.currentToken.beginLine + ", column " + e.currentToken.beginColumn);
+            } catch (TokenMgrError e) {
+                System.out.println("Lexical error in for.txt: " + e.getMessage());
+            }
 
-            FileReader fileReader6 = new FileReader("FullProgram.txt");
-            Java.ReInit(fileReader6);
-            parser.StartProgramAndLibraryImport();
-            System.out.println("Parsing Complete Java Program completed successfully!");
-            printSymbolTable();
+            fileReader = new FileReader("FullProgram.txt");
+            Java.ReInit(fileReader);
+            try {
+                parser.StartProgramAndLibraryImport();
+                System.out.println("Parsing Complete Java Program completed successfully!");
+                printSymbolTable();
+            } catch (ParseException e) {
+                System.out.println("Parse error in FullProgram.txt: " + e.getMessage());
+                System.out.println("At line " + e.currentToken.beginLine + ", column " + e.currentToken.beginColumn);
+            } catch (TokenMgrError e) {
+                System.out.println("Lexical error in FullProgram.txt: " + e.getMessage());
+            }
 
         } catch (FileNotFoundException e) {
-            System.out.println("File not found");
+            System.out.println("File not found: " + e.getMessage());
         }
     }
     public static void checkTokens (Java parser) {
