@@ -1,6 +1,20 @@
 PARSER_BEGIN(Java)
 import java.io.*;
+import java.util.*;
+
 public class Java {
+    private static Map<String, String> symbolTable = new HashMap<>();
+
+    public static void printSymbolTable() {
+        System.out.println("\n=== Symbol Table ===");
+        System.out.println("Variable Name\tType");
+        System.out.println("-------------\t----");
+        for (Map.Entry<String, String> entry : symbolTable.entrySet()) {
+            System.out.println(entry.getKey() + "\t\t\t" + entry.getValue());
+        }
+        System.out.println("==================\n");
+    }
+
     public static void main(String[] args) throws ParseException {
         Java parser = new Java(System.in);
 //        checkTokens(parser);
@@ -9,31 +23,37 @@ public class Java {
             Java.ReInit(fileReader);
             parser.Statement();
             System.out.println("Parsing completed successfully!");
+            printSymbolTable();
 
             FileReader fileReader2 = new FileReader("excepretion.txt");
             Java.ReInit(fileReader2);
             parser.compTest();
             System.out.println("Parsing Comparision completed successfully!");
+            printSymbolTable();
 
             FileReader fileReader3 = new FileReader("ifElse.txt");
             Java.ReInit(fileReader3);
             parser.IfStatementTest();
             System.out.println("Parsing If Statement completed successfully!");
+            printSymbolTable();
 
             FileReader fileReader4 = new FileReader("while.txt");
             Java.ReInit(fileReader4);
             parser.testWhile();
             System.out.println("Parsing While Statement completed successfully!");
+            printSymbolTable();
 
             FileReader fileReader5 = new FileReader("for.txt");
             Java.ReInit(fileReader5);
             parser.ForTest();
             System.out.println("Parsing For Statement completed successfully!");
+            printSymbolTable();
 
             FileReader fileReader6 = new FileReader("FullProgram.txt");
             Java.ReInit(fileReader6);
             parser.StartProgramAndLibraryImport();
             System.out.println("Parsing Complete Java Program completed successfully!");
+            printSymbolTable();
 
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
@@ -65,6 +85,10 @@ public class Java {
          System.out.println("File not found");
        }
     }
+
+    public static void addToSymbolTable(String name, String type) {
+        symbolTable.put(name, type);
+    }
 }
 
 
@@ -78,7 +102,7 @@ SKIP : { " " | "\t" | "\n" | "\r" | "  "
 }
 
 
-// Reserved words
+// Reserved keywords
 TOKEN : {
 
 < ABSTRACT : "abstract" >
@@ -193,7 +217,7 @@ TOKEN : {
 
 }
 
-/* LITERALS */
+// LITERALS
 TOKEN :
 {
 < FALSE: "false" >
@@ -224,7 +248,7 @@ TOKEN :
 | < WHEN: "when" >
 }
 
-//// Identifiers
+/// Identifiers
 TOKEN : {
  <DIGIT : [ "0"-"9" ]>
 | <ID : ( <LETTER> | "_" ) ( <LETTER> | <DIGIT> | "_" )*>
@@ -308,18 +332,29 @@ void ParameterList() : {}
     Parameter() (<COMMA> Parameter())*
 }
 
-void Parameter() : {}
+void Parameter() :
+{
+    Token type;
+    Token name;
+}
 {
     (
-        <INT> |
-        <DOUBLE> |
-        <CHAR> |
-        <STRING> |
-        <FLOAT> |
-        <BOOLEAN>
+        type=<INT> |
+        type=<DOUBLE> |
+        type=<CHAR> |
+        type=<STRING> |
+        type=<FLOAT> |
+        type=<BOOLEAN>
     )
     [<LBRACKET> <RBRACKET>]
-    <ID>
+    name=<ID>
+    {
+        String typeStr = type.image;
+        if (getToken(1).kind == 97) {
+            typeStr += "[]";
+        }
+        addToSymbolTable(name.image, typeStr);
+    }
 }
 
 void Statement() : {}
@@ -465,19 +500,27 @@ void IncrementDecrement() : {}
     ) MathExpressionForLoop()
 }
 
-void VariableDeclarationWithNoSemicolon() : {}
+void VariableDeclarationWithNoSemicolon() : 
+{
+    Token type;
+    Token name;
+}
 {
     (
-        <INT> |
-        <DOUBLE> |
-        <CHAR> |
-        <STRING> |
-        <FLOAT> |
-        <BOOLEAN>
+        type=<INT> |
+        type=<DOUBLE> |
+        type=<CHAR> |
+        type=<STRING> |
+        type=<FLOAT> |
+        type=<BOOLEAN>
     )
-    Identifier()
+    name=<ID>
+    {
+        addToSymbolTable(name.image, type.image);
+    }
     [<ASSIGN> Expression()]
 }
+
 void VariableDeclarationAfterComma() : {}
 {
     Identifier()
@@ -577,32 +620,45 @@ void ComparisonExpression() : {}
     )*
 }
 
-void VariableDeclaration() : {}
+void VariableDeclaration() :
+{
+    Token type;
+    Token name;
+}
 {
     (
-        <INT> |
-        <DOUBLE> |
-        <CHAR> |
-        <STRING> |
-        <FLOAT> |
-        <BOOLEAN>
+        type=<INT> |
+        type=<DOUBLE> |
+        type=<CHAR> |
+        type=<STRING> |
+        type=<FLOAT> |
+        type=<BOOLEAN>
     )
-    Identifier()
+    name=<ID>
+    {
+        addToSymbolTable(name.image, type.image);
+    }
     <SEMICOLON>
 }
 
-void Assignment() : {}
+void Assignment() : 
 {
-
-(
-        <STRING> Identifier() <ASSIGN> (LOOKAHEAD(2)(MathExpression())+ | <STRING_LITERAL> ) |
-        <CHAR> Identifier() <ASSIGN> (<CHAR_LITERAL>| Identifier()) |
-        <INT> Identifier() <ASSIGN> (LOOKAHEAD(3)Digits() | (MathExpression())+) |
-        <DOUBLE> Identifier() <ASSIGN> (LOOKAHEAD(2)<DOUBLE_LITERAL> | (MathExpression())+) |
-        <FLOAT> Identifier() <ASSIGN> (LOOKAHEAD(2)<FLOAT_LITERAL>  | (MathExpression())+) |
-        <BOOLEAN> Identifier() <ASSIGN> (LOOKAHEAD(2)<TRUE> | <FALSE> | (Expression() )+)
-      )
-      <SEMICOLON>
+    Token type;
+    Token name;
+}
+{
+    (
+        type=<STRING> name=<ID> <ASSIGN> (LOOKAHEAD(2)(MathExpression())+ | <STRING_LITERAL> ) |
+        type=<CHAR> name=<ID> <ASSIGN> (<CHAR_LITERAL>| Identifier()) |
+        type=<INT> name=<ID> <ASSIGN> (LOOKAHEAD(3)Digits() | (MathExpression())+) |
+        type=<DOUBLE> name=<ID> <ASSIGN> (LOOKAHEAD(2)<DOUBLE_LITERAL> | (MathExpression())+) |
+        type=<FLOAT> name=<ID> <ASSIGN> (LOOKAHEAD(2)<FLOAT_LITERAL>  | (MathExpression())+) |
+        type=<BOOLEAN> name=<ID> <ASSIGN> (LOOKAHEAD(2)<TRUE> | <FALSE> | (Expression() )+)
+    )
+    {
+        addToSymbolTable(name.image, type.image);
+    }
+    <SEMICOLON>
 }
 
 void Digits() : {}
