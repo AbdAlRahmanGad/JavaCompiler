@@ -19,6 +19,11 @@ public class Java {
             Java.ReInit(fileReader3);
             parser.IfStatementTest();
             System.out.println("Parsing If Statement completed successfully!");
+
+            FileReader fileReader4 = new FileReader("while.txt");
+            Java.ReInit(fileReader4);
+            parser.testWhile();
+            System.out.println("Parsing While Statement completed successfully!");
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
         }
@@ -237,23 +242,31 @@ void Statement() : {}
     (LOOKAHEAD(3)
         VariableDeclaration() |
         Assignment() |
-        IfStatement()
+        IfStatement() |
+        WhileStatement()
     )*
     <EOF>
 }
 
-void StatementIf() : {}
+void nestedStatement() : {}
 {
-    (LOOKAHEAD(3)
+    (LOOKAHEAD(4)
         VariableDeclaration() |
-        Assignment()
+        Assignment() |
+        WhileStatement() |
+        IfStatement()
     )
 }
 
+void testWhile() : {}
+{
+    (WhileStatement())*
+    <EOF>
+}
 void WhileStatement() : {}
 {
-    <WHILE> <LPAREN> MathExpression() <RPAREN>
-     (Statement() | <LBRACE> (Statement())* <RBRACE>)
+    <WHILE> <LPAREN> Expression() <RPAREN>
+     (nestedStatement() | <LBRACE> (nestedStatement())* <RBRACE>)
 }
 
 //void ForStatement() : {}
@@ -276,8 +289,8 @@ void compTest() : {}
 void IfStatement() : {}
 {
     <IF> <LPAREN> Expression() <RPAREN>
-     ( <LBRACE> (StatementIf())* <RBRACE> | StatementIf())
-     (<ELSE> (<LBRACE> (StatementIf())* <RBRACE> | StatementIf()))?
+     ( <LBRACE> (nestedStatement())* <RBRACE> | nestedStatement())
+     (LOOKAHEAD(3)<ELSE> (<LBRACE> (nestedStatement())* <RBRACE> | nestedStatement()))?
 }
 
 void MathExpression() : {}
@@ -305,7 +318,7 @@ void Factor() : {}
 
 void Expression() : {}
 {
-    ComparisonExpression() (<SC_AND> Expression() |
+    ComparisonExpression() ( LOOKAHEAD(3) <SC_AND> Expression() |
     <SC_OR> Expression())*
 }
 
@@ -338,11 +351,11 @@ void Assignment() : {}
 {
 
 (
-            <STRING> Identifier() <ASSIGN> <STRING_LITERAL> |
-            <CHAR> Identifier() <ASSIGN> <CHAR_LITERAL> |
-            <INT> Identifier() <ASSIGN> Digits() |
-            <DOUBLE> Identifier() <ASSIGN> <DOUBLE_LITERAL> |
-            <FLOAT> Identifier() <ASSIGN> <FLOAT_LITERAL>
+        <STRING> Identifier() <ASSIGN> (LOOKAHEAD(2)(MathExpression())+ | <STRING_LITERAL> ) |
+        <CHAR> Identifier() <ASSIGN> (<CHAR_LITERAL>| Identifier()) |
+        <INT> Identifier() <ASSIGN> (LOOKAHEAD(3)Digits() | (MathExpression())+) |
+        <DOUBLE> Identifier() <ASSIGN> (LOOKAHEAD(2)<DOUBLE_LITERAL> | (MathExpression())+) |
+        <FLOAT> Identifier() <ASSIGN> (LOOKAHEAD(2)<FLOAT_LITERAL>  | (MathExpression())+)
       )
       <SEMICOLON>
 }

@@ -1,0 +1,46 @@
+while (a < b && c > d) {
+    while (true) {
+     if (e == f) {
+        int g = g / 2;
+        int h = h + 3;
+     }
+    }
+    int x = x + 1;
+    int y = y - 1;
+}
+
+while (c > d)
+    String name = "hello" + "world";
+
+
+while (e == f) {
+   int g = g / 2;
+   int h = h + 3;
+}
+
+while (i != j)
+    int k = k - 1;
+
+while (l <= m) {
+    int n = n + 2;
+    int o = o - 3;
+}
+
+while (p >= q)
+    int r = r * 3;
+
+while (s < t) {
+    int u = u / 2;
+    int v = v + 4;
+}
+
+while (w > x)
+    int y = y - 5;
+
+while (z == a) {
+   int b = b + 6;
+   int c = c - 7;
+}
+
+while (d != e)
+   int f = f * 4;
