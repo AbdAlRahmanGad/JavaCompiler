@@ -1,3 +1,6 @@
+import java.util.Scanner;
+import java.io.FileReader;
+
 public class ParserTest {
     public static void main(String[] args) {
         // Variable declarations and assignments
