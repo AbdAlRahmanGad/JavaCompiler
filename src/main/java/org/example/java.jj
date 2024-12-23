@@ -32,8 +32,9 @@ public class Java {
 
             FileReader fileReader6 = new FileReader("FullProgram.txt");
             Java.ReInit(fileReader6);
-            parser.Statement();
+            parser.StartProgramAndLibraryImport();
             System.out.println("Parsing Complete Java Program completed successfully!");
+
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
         }
@@ -247,6 +248,92 @@ MORE : {
 | < D : ("d" | "D") >
 }
 
+void StartProgramAndLibraryImport() : {}
+{
+    (ImportDeclaration())*
+    ClassDeclarationAndBody()
+    <EOF>
+}
+
+void ImportDeclaration() : {}
+{
+    <IMPORT> ImportName() <SEMICOLON>
+}
+
+void ImportName() : {}
+{
+    <ID> (<DOT> <ID>)*
+}
+
+void ClassDeclarationAndBody() : {}
+{
+    [<PUBLIC> | <PROTECTED> | <PRIVATE>] 
+    <CLASS> <ID> 
+    [<IMPLEMENTS> InheritedList()]
+    <LBRACE>
+        (ClassMember())*
+    <RBRACE>
+}
+
+void ClassMember() : {}
+{
+    (
+        LOOKAHEAD(3)
+        FieldDeclaration() |
+        MethodDeclaration()
+    )
+}
+
+void FieldDeclaration() : {}
+{
+    [<PUBLIC> | <PROTECTED> | <PRIVATE>]
+    [<STATIC>]
+    VariableDeclarationWithNoSemicolon() (<COMMA> VariableDeclarationAfterComma() )* <SEMICOLON>
+}
+
+void InheritedList() : {}
+{
+    ImportName() (<COMMA> ImportName())*
+}
+
+void MethodDeclaration() : {}
+{
+    [<PUBLIC> | <PROTECTED> | <PRIVATE>]
+    [<STATIC>]
+    (
+        <VOID> |
+        <INT> |
+        <DOUBLE> |
+        <CHAR> |
+        <STRING> |
+        <FLOAT> |
+        <BOOLEAN>
+    )
+    <ID> <LPAREN> [ParameterList()] <RPAREN>
+    <LBRACE>
+        (Statement())
+    <RBRACE>
+}
+
+void ParameterList() : {}
+{
+    Parameter() (<COMMA> Parameter())*
+}
+
+void Parameter() : {}
+{
+    (
+        <INT> |
+        <DOUBLE> |
+        <CHAR> |
+        <STRING> |
+        <FLOAT> |
+        <BOOLEAN>
+    )
+    [<LBRACKET> <RBRACKET>]
+    <ID>
+}
+
 void Statement() : {}
 {
     (LOOKAHEAD(3)
@@ -258,9 +345,12 @@ void Statement() : {}
         LOOKAHEAD(2)
         <ID> NoIDIncrementDecrement() <SEMICOLON>|
         <ID> noIDAssignmentWithNoSemicolon() <SEMICOLON> |
-        IncrementDecrement() <SEMICOLON>
+        IncrementDecrement() <SEMICOLON> |
+        LOOKAHEAD(3)
+                BreakStatement() |
+                ContinueStatement() |
+                ObjectCreation()
     )*
-    <EOF>
 }
 
 void nestedStatement() : {}
@@ -274,11 +364,32 @@ void nestedStatement() : {}
         LOOKAHEAD(2)
         <ID> NoIDIncrementDecrement() <SEMICOLON>|
         <ID> noIDAssignmentWithNoSemicolon() <SEMICOLON> |
-        IncrementDecrement() <SEMICOLON>
-//        IncrementDecrement() <SEMICOLON> |
-//                AssignmentWithNoSemicolon() <SEMICOLON>
-
+        IncrementDecrement() <SEMICOLON> |
+        LOOKAHEAD(3)
+                BreakStatement() |
+                ContinueStatement() |
+                ObjectCreation()
     )
+}
+
+void BreakStatement() : {}
+{
+    <BREAK> <SEMICOLON>
+}
+
+void ContinueStatement() : {}
+{
+    <CONTINUE> <SEMICOLON>
+}
+
+void ObjectCreation() : {}
+{
+    <ID> <ID> <ASSIGN> <NEW> <ID> <LPAREN> [ArgumentList()] <RPAREN> <SEMICOLON>
+}
+
+void ArgumentList() : {}
+{
+    Expression() (<COMMA> Expression())*
 }
 
 void testWhile() : {}

@@ -1,4 +1,4 @@
-public class ParserTest {
+public ParserTest {
     public static void main(String[] args) {
         // Variable declarations and assignments
         int x = 10;
