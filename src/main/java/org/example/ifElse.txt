@@ -1,0 +1,29 @@
+if (a == b) {
+}else {
+   int w = 4;
+}
+if (e != f)
+   int g = 5;
+else
+   int h = 6;
+
+if (i < j) {
+   int k = 7;
+} else {
+   int n = 8;
+}
+
+if (o <= p)
+   int q = 9;
+else
+   int t = 10;
+
+if (v == w) {
+   int x = 12;
+   int y = 13;
+}
+
+if (x != y)
+   int z = 14;
+else
+   int a = 15;

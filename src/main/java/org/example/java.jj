@@ -3,13 +3,22 @@ import java.io.*;
 public class Java {
     public static void main(String[] args) throws ParseException {
         Java parser = new Java(System.in);
-        checkTokens(parser);
-
+//        checkTokens(parser);
         try{
             FileReader fileReader = new FileReader("VariableDeclerationParserTest.txt");
             Java.ReInit(fileReader);
             parser.Statement();
             System.out.println("Parsing completed successfully!");
+
+            FileReader fileReader2 = new FileReader("excepretion.txt");
+            Java.ReInit(fileReader2);
+            parser.compTest();
+            System.out.println("Parsing Comparision completed successfully!");
+
+            FileReader fileReader3 = new FileReader("ifElse.txt");
+            Java.ReInit(fileReader3);
+            parser.IfStatementTest();
+            System.out.println("Parsing If Statement completed successfully!");
         } catch (FileNotFoundException e) {
             System.out.println("File not found");
         }
@@ -41,6 +50,7 @@ public class Java {
        }
     }
 }
+
 
 PARSER_END(Java)
 
@@ -215,8 +225,8 @@ TOKEN : {
  <DIGIT : [ "0"-"9" ]>
 | <ID : ( <LETTER> | "_" ) ( <LETTER> | <DIGIT> | "_" )*>
 | <LETTER : [ "a"-"z", "A"-"Z" ]>
-
 }
+
 MORE : {
 < F : ("f" | "F") >
 | < D : ("d" | "D") >
@@ -226,9 +236,89 @@ void Statement() : {}
 {
     (LOOKAHEAD(3)
         VariableDeclaration() |
-        Assignment()
+        Assignment() |
+        IfStatement()
     )*
     <EOF>
+}
+
+void StatementIf() : {}
+{
+    (LOOKAHEAD(3)
+        VariableDeclaration() |
+        Assignment()
+    )
+}
+
+void WhileStatement() : {}
+{
+    <WHILE> <LPAREN> MathExpression() <RPAREN>
+     (Statement() | <LBRACE> (Statement())* <RBRACE>)
+}
+
+//void ForStatement() : {}
+//{
+//    <FOR> <LPAREN> (Assignment() | VariableDeclaration())? <SEMICOLON> Expression()? <SEMICOLON> Assignment()? <RPAREN> Statement()
+//}
+
+void IfStatementTest() : {}
+{
+   (IfStatement())*
+   <EOF>
+}
+
+void compTest() : {}
+{
+    (Expression())*
+    <EOF>
+}
+
+void IfStatement() : {}
+{
+    <IF> <LPAREN> Expression() <RPAREN>
+     ( <LBRACE> (StatementIf())* <RBRACE> | StatementIf())
+     (<ELSE> (<LBRACE> (StatementIf())* <RBRACE> | StatementIf()))?
+}
+
+void MathExpression() : {}
+{
+    Term() ( <PLUS> Term() | <MINUS> Term() )*
+}
+
+void Term() : {}
+{
+    Factor() (<STAR> Factor() | <SLASH> Factor())*
+}
+
+void Factor() : {}
+{
+    Digits() |
+    <DOUBLE_LITERAL> |
+    <FLOAT_LITERAL> |
+    <CHAR_LITERAL> |
+    <STRING_LITERAL> |
+    <TRUE> |
+    <FALSE> |
+    <LPAREN> Expression() <RPAREN> |
+    <ID>
+}
+
+void Expression() : {}
+{
+    ComparisonExpression() (<SC_AND> Expression() |
+    <SC_OR> Expression())*
+}
+
+void ComparisonExpression() : {}
+{
+    MathExpression() (
+        <EQ> MathExpression() |
+        <NE> MathExpression() |
+        <LT> MathExpression() |
+        <GT> MathExpression() |
+        <LE> MathExpression() |
+        <GE> MathExpression()
+    )*
 }
 
 void VariableDeclaration() : {}
@@ -243,6 +333,7 @@ void VariableDeclaration() : {}
     Identifier()
     <SEMICOLON>
 }
+
 void Assignment() : {}
 {
 
@@ -260,6 +351,7 @@ void Digits() : {}
 {
     (<DIGIT>)+
 }
+
 void Identifier() : {}
 {
   <ID>
